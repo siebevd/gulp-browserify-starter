@@ -35,13 +35,14 @@ A basic starter for gulp & browserify projects
     - index.html
 - gulpfile
 
+
 ## Commands
-- the default task will startup a server at port 3000 (http://localhost:3000) and run everything unminified on every change you make to the file
+the default task will startup a server at port 3000 (http://localhost:3000) and run everything unminified on every change you make to the file
 ``` 
   gulp
 ``` 
 
-- the production task will clean out the build folder and compile/minify all the files (js,css,images), all the files in the src/js/vendor folder will be copied to build/js/vendor. 
+the production task will clean out the build folder and compile/minify all the files (js,css,images), all the files in the src/js/vendor folder will be copied to build/js/vendor. 
 ``` 
   gulp production
 ``` 
