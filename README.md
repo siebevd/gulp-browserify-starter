@@ -17,9 +17,13 @@ A basic starter for gulp & browserify projects
 ## Get Started
 1. Install node ( & npm)
 2. Install gulp globally
-        npm install -g gulp
+``` 
+  npm install -g gulp
+``` 
 3. Run Dependencies
-        npm install
+``` 
+  npm install
+``` 
 
 ## Structure
 - build
@@ -32,7 +36,11 @@ A basic starter for gulp & browserify projects
 - gulpfile
 ## Commands
 - the default task will startup a server at port 3000 (http://localhost:3000) and run everything unminified on every change you make to the file
-        gulp
+``` 
+  gulp
+``` 
 
 - the production task will clean out the build folder and compile/minify all the files (js,css,images), all the files in the src/js/vendor folder will be copied to build/js/vendor. 
-        gulp production
+``` 
+  gulp production
+``` 
