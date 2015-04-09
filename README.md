@@ -34,6 +34,7 @@ A basic starter for gulp & browserify projects
     - sass
     - index.html
 - gulpfile
+
 ## Commands
 - the default task will startup a server at port 3000 (http://localhost:3000) and run everything unminified on every change you make to the file
 ``` 
