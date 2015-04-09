@@ -68,7 +68,7 @@ function brwsrfy() {
       return "ERROR: " + error.message;
       this.emit('end');
     }))
-    .pipe(source('bundle.js'))
+    .pipe(source('app.js'))
     .pipe(buffer())
     .pipe(rename({suffix: '.min'}))
     .pipe(gulp.dest('build/js'));
