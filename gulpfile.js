@@ -15,6 +15,8 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     assign = require('lodash.assign'),
     uglify = require('gulp-uglify'),
+    stripDebug = require('gulp-strip-debug'),
+
     
     sass = require('gulp-sass'),
     prefixer = require('gulp-autoprefixer'), // Prefix css with different browser stuff
@@ -71,7 +73,21 @@ function brwsrfy() {
     .pipe(source('app.js')) // Give the new file the name app.js
     .pipe(buffer()) // Transform it back to gulp readable stuff
     .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('build/js'));
+    .pipe(gulp.dest(settings.DEST_BUILD + '/js'));
+}
+
+gulp.task('brwsrfyMin',function() {
+  return b.bundle()
+    .on("error", notify.onError(function (error) {
+      return "ERROR: " + error.message;
+      this.emit('end');
+    }))
+    .pipe(source('app.js')) // Give the new file the name app.js
+    .pipe(buffer()) // Transform it back to gulp readable stuff
+    .pipe(uglify())
+    .pipe(stripDebug())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest(settings.DEST_BUILD + '/js'));
 }
 
 
@@ -126,7 +142,7 @@ gulp.task('default', ['webserver','copyFiles','styles','browserify','watch']);
 
 gulp.task('production',function(callback){
   // sequence it, so the clean one runs before all the rest
-  runSequence('clean',['styles','browserify','<copyFiles></copyFiles>']);
+  runSequence('clean',['styles','brwsrfyMin','copyFiles']);
 });
 
 
