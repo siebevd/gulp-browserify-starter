@@ -1,60 +1,60 @@
-var browserify = require('browserify'),
+var gulp = require('gulp'),
+    gutil = require('gulp-util'),
+    webserver = require('gulp-webserver'), // Server 
+    del = require('del'), // Clear out files & folders
+    watch = require('gulp-watch'),
+    plumber = require('gulp-plumber'), // Fixes watch task on error 
+    notify = require('gulp-notify'), // Get Mac Notifications when a task is finished
+    rename = require('gulp-rename'),
+    runSequence = require('run-sequence'), // Run tasks in sequence instead of parallel
+    changed = require('gulp-changed'),
+
     source = require('vinyl-source-stream'), // Transforming browserify so we can use it with gulp
     watchify = require('watchify'),
     buffer = require('vinyl-buffer'),
-    del = require('del'), // Clear out files & folders
-    gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    sass = require('gulp-sass'),
-    plumber = require('gulp-plumber'), // Fixes watch task on error 
-    webserver = require('gulp-webserver'), // Server 
-    notify = require('gulp-notify'), // Get Mac Notifications when a task is finished
-    imagemin = require('gulp-imagemin'),
-    prefixer = require('gulp-autoprefixer'), // Prefix css with different browser stuff
-    rename = require('gulp-rename'),
-    minifyCSS = require('gulp-minify-css'),
-    runSequence = require('run-sequence'), // Run tasks in sequence instead of parallel
-    pngquant = require('imagemin-pngquant'),
+    browserify = require('browserify'),
     assign = require('lodash.assign'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    
+    sass = require('gulp-sass'),
+    prefixer = require('gulp-autoprefixer'), // Prefix css with different browser stuff
+    minifyCSS = require('gulp-minify-css'),
+
+    settings = {
+      DEST_BUILD : './build',
+      DEST_SRC : './src',
+      MAIN_JS : '/js/app.js',
+      MAIN_CSS : '/sass/style.scss',
+      COPY_FILE : ['src/*.html','src/js/vendor/*','src/img/**/**'],
+      PORT : 3000
+    };
 
 
 /*
- * Basic Setup -- DEV
+ * Server 
  */
-
 gulp.task('webserver', function() {
-  gulp.src('build')
+  gulp.src(settings.DEST_BUILD)
     .pipe(webserver({
       fallback: 'index.html',
-      port: 3000
+      port: settings.port
     }));
-});
-
-gulp.task('styles', function() {
-  gulp.src('src/sass/style.scss')
-    .pipe(plumber({errorHandler: notify.onError("<%= error.fileName %> [<%= error.lineNumber %>]: <%= error.message %>")}))
-    .pipe(sass())
-    .pipe(prefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    .pipe(rename({suffix: '.min'})) 
-    .pipe(gulp.dest('build/css'))
-    .pipe(notify({ message: 'Styles task complete' }));
 });
 
 
 /*
  * Browserify
  */
-
-
 var browserifyOpts = {
-  entries: './src/js/app.js',
+  entries: settings.DEST_SRC + settings.MAIN_JS,
   extensions: ['.hbs'], 
   debug:true
 };
 
+
+// Add watchify to browserify to speed up compile when developing
 var opts = assign({}, watchify.args, browserifyOpts);
-var b = watchify(browserify(opts));
+var b = watchify(browserify(opts)); 
 
 
 gulp.task('browserify',brwsrfy);
@@ -68,88 +68,65 @@ function brwsrfy() {
       return "ERROR: " + error.message;
       this.emit('end');
     }))
-    .pipe(source('app.js'))
-    .pipe(buffer())
+    .pipe(source('app.js')) // Give the new file the name app.js
+    .pipe(buffer()) // Transform it back to gulp readable stuff
     .pipe(rename({suffix: '.min'}))
     .pipe(gulp.dest('build/js'));
 }
 
 
+
 /*
- * Basic Setup -- Production 
+ * Copy all files to build folder
+ */
+gulp.task('copyFiles',copyFiles);
+
+function copyFiles(){
+  return gulp.src(settings.COPY_FILE,{base:'src'})
+      .pipe(changed(settings.DEST_BUILD))
+      .pipe(notify({ message: 'File Moved' }))
+      .pipe(gulp.dest(settings.DEST_BUILD));
+};
+
+
+/*
+ * Clean out the build directory
  */
 
-
-gulp.task('html',function(){
-  return gulp.src(['src/*.html'])
-    .pipe(gulp.dest('build/'))
-    .pipe(notify({ message: 'Html files moved' })); // Send notification
-});
-
-gulp.task('vendorJs',function(){
-  return gulp.src(['src/js/vendor/*'])
-    .pipe(gulp.dest('build/js/vendor/'))
-    .pipe(notify({ message: 'Javascript Vendor files moved' })); // Send notification
-});
-
-gulp.task('img',function(){
-  return gulp.src(['src/img/*'])
-    .pipe(gulp.dest('build/img/'))
-    .pipe(notify({ message: 'Image files moved' })); // Send notification
-});
-
 gulp.task('clean',function(cb){
-    del(['build/**'], cb);
+    del([settings.DEST_BUILD+'/**'], cb);
 });
 
 
-gulp.task('browserifyMin', function () {
-  return browserify(browserifyOpts).bundle()
-    .on("error", notify.onError(function (error) {
-      return "ERROR: " + error.message;
-      this.emit('end');
-    }))
-    .pipe(source('app.js'))
-    .pipe(buffer())
-    .pipe(uglify())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('build/js'));
-});
+/*
+ * Css
+ */
 
+gulp.task('styles', styles);
 
-
-
-gulp.task('stylesMin', function() {
-  gulp.src('src/sass/style.scss')
+function styles() {
+  gulp.src(settings.DEST_SRC + settings.MAIN_CSS)
     .pipe(plumber({errorHandler: notify.onError("<%= error.fileName %> [<%= error.lineNumber %>]: <%= error.message %>")}))
     .pipe(sass())
     .pipe(prefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    .pipe(minifyCSS())
     .pipe(rename({suffix: '.min'})) 
-    .pipe(gulp.dest('build/css'))
-    .pipe(notify({ message: 'Styles task complete -- Minified' }));
-});
+    .pipe(minifyCSS())
+    .pipe(gulp.dest(settings.DEST_BUILD + '/css'))
+    .pipe(notify({ message: 'Styles task complete' }));
+};
 
 
-gulp.task('img-resize', function () {
-    return gulp.src('src/img/*')
-        .pipe(imagemin({
-            progressive: true,
-            use: [pngquant()]
-        }))
-        .pipe(gulp.dest('build/img'));
-});
 
 
 /*
  * Gulp Commands
  */
 
-gulp.task('default', ['webserver','html','img','vendorJs','styles','browserify','watch']);
+gulp.task('default', ['webserver','copyFiles','styles','browserify','watch']);
 
 gulp.task('production',function(callback){
   // sequence it, so the clean one runs before all the rest
-  runSequence('clean',['html','stylesMin','browserifyMin','img-resize','vendorJs']);
+  runSequence('clean',['styles','browserify','<copyFiles></copyFiles>']);
 });
 
 
@@ -158,18 +135,11 @@ gulp.task('production',function(callback){
  */
 
 gulp.task('watch', function() {
-  // Watch .scss files
-  gulp.watch('src/sass/*.scss',['styles']); 
 
-  // Watch .js files
-  gulp.watch('src/js/**',['browserify']);
+  // Watch all general files
+  watch(settings.COPY_FILE,copyFiles);
 
-  // Watch .html files
-  gulp.watch('src/*.html',['html']);
+  // Watch sass files
+  watch(settings.DEST_SRC + '/sass/*.scss',styles); 
 
-  // Watch img files
-  gulp.watch('src/img/*',['img']);
-
-  // Watch js vendor files
-  gulp.watch('src/js/vendor/*',['vendorJs']);
 });
