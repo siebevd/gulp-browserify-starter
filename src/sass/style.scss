@@ -9,3 +9,46 @@
  @import "vendor/skeleton.scss"; // Based on http://www.getskeleton.con
 
  @import "base.scss";
+
+
+ /*
+ * 
+ * Load in All the files    
+ *  
+ */
+
+
+
+/*
+ * Base   
+ */
+
+@import "base/reset.scss"; // Basic css reset
+@import "base/fonts.scss"; // Webfonts
+@import "base/variables.scss"; // All the variables
+@import "base/animations.scss"; // All the animations
+@import "base/mixins.scss"; // All the mixins
+@import "base/utilities.scss"; // All the utility functions
+@import "base/base.scss"; // All the utility functions
+
+
+/*
+ * Components  
+ */
+
+@import "components/buttons.scss"; // Button Styling
+@import "components/form.scss"; // Form Styling
+@import "components/popup.scss"; // Form Styling
+
+/*
+ * Sections  
+ */
+@import "sections/intro.scss"; 
+@import "sections/effortless.scss"; 
+@import "sections/search.scss"; 
+@import "sections/video.scss"; 
+@import "sections/find.scss"; 
+@import "sections/footer.scss"; 
+
+
+//@import "icons.scss"; // Icons
