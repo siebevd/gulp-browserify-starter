@@ -1,0 +1,27 @@
+/*
+ * 
+ * Mixins
+ *  
+ */
+
+
+// Hide text
+@mixin hide-text { text-indent: 110%; white-space: nowrap; overflow: hidden; display: inherit;}
+
+// Hide text that is too long
+@mixin shorten-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+// Make it scrollable
+@mixin scrollable-y { overflow-y:scroll; overflow-x:hidden; -webkit-overflow-scrolling: touch; }
+
+// Vertical align
+@mixin vertical-align { position: relative; top:50%; transform: translateY(-50%);}
+
+
+@mixin font-smooth {   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+@mixin white-placeholder{
+  ::-webkit-input-placeholder { color: #fff; font-style: italic;}
+  ::-moz-placeholder { color: #fff; font-style: italic;}
+  :-ms-input-placeholder { color: #fff;font-style: italic; }
+}

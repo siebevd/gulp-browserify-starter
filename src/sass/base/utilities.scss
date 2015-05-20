@@ -1,0 +1,31 @@
+/*
+ * 
+ * Utilities
+ * -- All utility classes should start with u-
+ *  
+ */
+
+// Hide the text
+.u-hide-text { @include hide-text; }
+
+// Add ellipsis to text ( this is some long text...)
+.u-shorten-text { @include shorten-text; }
+
+// Make it scroll vertically
+.u-scroll-v { @include scrollable-y; }
+
+// Make it alligned in the center (vertically)
+.u-align-center-v { @include vertical-align; }
+
+// Float left
+.u-float-left { float: left; }
+
+// Float right
+.u-float-right { float: right; }
+
+// Float fix (clear both)
+.u-cf { clear:both; }
+
+// Hide the element
+.u-hide { display:none; }
+

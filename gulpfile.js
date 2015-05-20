@@ -32,7 +32,7 @@ var gulp = require('gulp'),
       MAIN_JS : '/js/app.js', // the main javascript file
       MAIN_CSS : '/sass/style.scss', // the main sass file
       DIR_FONTS_SVG : '/icons/*.svg', // the path to the svg file to generate fonts
-      FONT_NAME : 'icnsfont', // the font name
+      FONT_NAME : 'iconfont', // the font name
       FONT_CSS_TEMPLATE : '/sass/_tpl/icons.scss', // the template to generate font css
       ICON_CLASS_NAME : 'icn', // the classname that will be given to the icons
       COPY_FILE : ['src/*.html','src/js/vendor/*','src/img/**/**','src/fonts/**/**'], // the folders & files to copy (w/ watch) from src to build folder
